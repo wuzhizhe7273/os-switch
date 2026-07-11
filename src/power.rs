@@ -11,7 +11,9 @@ mod imp {
     }
 
     pub fn hibernate_reboot() -> Result<(), BootError> {
-        unsafe { sync(); }
+        unsafe {
+            sync();
+        }
 
         // systemctl hibernate 发送请求给 logind 后立即返回，logind 异步执行休眠
         Command::new("systemctl")
