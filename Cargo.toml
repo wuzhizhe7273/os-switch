@@ -1,0 +1,11 @@
+[package]
+name = "os-switch"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+efivar = "2"
+privesc = "1"
+clap = { version = "4", features = ["derive"] }
+thiserror = "2"
+anyhow = "1"
