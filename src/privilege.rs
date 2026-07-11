@@ -50,8 +50,14 @@ fn enable_env_privilege() {
             privs: [LUID_AND_ATTRIBUTES; 1],
         }
 
+        #[link(name = "kernel32")]
         unsafe extern "system" {
             fn GetCurrentProcess() -> *const std::ffi::c_void;
+            fn CloseHandle(handle: *mut std::ffi::c_void) -> i32;
+        }
+
+        #[link(name = "advapi32")]
+        unsafe extern "system" {
             fn OpenProcessToken(
                 handle: *const std::ffi::c_void,
                 access: u32,
@@ -66,7 +72,6 @@ fn enable_env_privilege() {
                 prev_state: *mut TOKEN_PRIVILEGES,
                 ret_len: *mut u32,
             ) -> i32;
-            fn CloseHandle(handle: *mut std::ffi::c_void) -> i32;
         }
 
         let mut token: *mut std::ffi::c_void = ptr::null_mut();
