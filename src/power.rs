@@ -11,22 +11,16 @@ mod imp {
     }
 
     pub fn hibernate_reboot() -> Result<(), BootError> {
-        unsafe {
-            sync();
-        }
+        unsafe { sync(); }
 
-        let status = Command::new("systemctl")
+        // systemctl hibernate 发送请求给 logind 后立即返回，logind 异步执行休眠
+        Command::new("systemctl")
             .args(["hibernate"])
             .status()
             .map_err(|e| BootError::HibernateFailed(format!("无法执行 systemctl: {e}")))?;
 
-        if status.success() {
-            unreachable!()
-        } else {
-            Err(BootError::HibernateFailed(
-                "systemctl hibernate 返回非零".into(),
-            ))
-        }
+        // 不管返回值——休眠由 logind 异步处理，进程可能已被冻结
+        std::process::exit(0);
     }
 
     pub fn reboot_now() -> ! {
