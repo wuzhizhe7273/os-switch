@@ -9,6 +9,8 @@ thiserror = "2"
 anyhow = "1"
 
 [profile.release]
-opt-level = "s"
+opt-level = "z"
 lto = true
 strip = true
+panic = "abort"
+codegen-units = 1
