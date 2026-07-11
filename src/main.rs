@@ -21,6 +21,8 @@ fn main() {
 }
 
 fn run(cli: Cli) -> anyhow::Result<()> {
+    privilege::ensure_root();
+
     match cli.command {
         Command::List => cmd_list(),
         Command::Status => cmd_status(),
@@ -58,8 +60,6 @@ fn cmd_status() -> anyhow::Result<()> {
 }
 
 fn cmd_switch(name: &str, reboot: bool) -> anyhow::Result<()> {
-    privilege::ensure_root();
-
     let mgr = create_manager();
     let target = mgr
         .entries()?
@@ -89,7 +89,6 @@ fn cmd_switch(name: &str, reboot: bool) -> anyhow::Result<()> {
 }
 
 fn cmd_cancel() -> anyhow::Result<()> {
-    privilege::ensure_root();
     let mgr = create_manager();
     mgr.clear_next_boot().context("清除 BootNext 失败")?;
     println!("BootNext 已清除");
