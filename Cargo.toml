@@ -1,11 +1,14 @@
 [package]
 name = "os-switch"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-efivar = "2"
-privesc = "1"
 clap = { version = "4", features = ["derive"] }
 thiserror = "2"
 anyhow = "1"
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true

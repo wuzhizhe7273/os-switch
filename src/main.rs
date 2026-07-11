@@ -2,14 +2,9 @@ use anyhow::Context;
 use clap::Parser;
 use os_switch::boot::BootManager;
 use os_switch::cli::{Cli, Command};
+use os_switch::efi::LinuxEfiBootManager;
 use os_switch::power;
 use os_switch::privilege;
-
-#[cfg(target_os = "linux")]
-use os_switch::efi::LinuxEfiBootManager;
-
-#[cfg(target_os = "windows")]
-use os_switch::windows::WindowsBootManager;
 
 fn main() {
     let cli = Cli::parse();
@@ -31,19 +26,8 @@ fn run(cli: Cli) -> anyhow::Result<()> {
     }
 }
 
-fn create_manager() -> impl BootManager {
-    #[cfg(target_os = "linux")]
-    {
-        LinuxEfiBootManager {}
-    }
-    #[cfg(target_os = "windows")]
-    {
-        WindowsBootManager {}
-    }
-}
-
 fn cmd_list() -> anyhow::Result<()> {
-    let mgr = create_manager();
+    let mgr = LinuxEfiBootManager {};
     let entries = mgr.entries()?;
     for e in &entries {
         println!("  Boot{}  {}", e.id, e.description);
@@ -52,7 +36,7 @@ fn cmd_list() -> anyhow::Result<()> {
 }
 
 fn cmd_status() -> anyhow::Result<()> {
-    let mgr = create_manager();
+    let mgr = LinuxEfiBootManager {};
     let entries = mgr.entries()?;
     println!("  BootManager: {}", mgr.name());
     println!("  活跃引导项: {} 个", entries.len());
@@ -60,7 +44,7 @@ fn cmd_status() -> anyhow::Result<()> {
 }
 
 fn cmd_switch(name: &str, reboot: bool) -> anyhow::Result<()> {
-    let mgr = create_manager();
+    let mgr = LinuxEfiBootManager {};
     let target = mgr
         .entries()?
         .into_iter()
@@ -89,7 +73,7 @@ fn cmd_switch(name: &str, reboot: bool) -> anyhow::Result<()> {
 }
 
 fn cmd_cancel() -> anyhow::Result<()> {
-    let mgr = create_manager();
+    let mgr = LinuxEfiBootManager {};
     mgr.clear_next_boot().context("清除 BootNext 失败")?;
     println!("BootNext 已清除");
     Ok(())
