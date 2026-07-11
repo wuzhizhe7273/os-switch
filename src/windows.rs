@@ -4,7 +4,7 @@ use crate::error::BootError;
 const EFI_GUID: &str = "{8be4df61-93ca-11d2-aa0d-00e098032b8c}";
 
 // kernel32.dll
-extern "system" {
+unsafe extern "system" {
     fn GetFirmwareEnvironmentVariableW(
         lpName: *const u16,
         lpGuid: *const u16,

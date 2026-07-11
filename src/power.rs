@@ -43,7 +43,7 @@ mod imp {
     use crate::error::BootError;
 
     #[link(name = "powrprof")]
-    extern "system" {
+    unsafe extern "system" {
         fn SetSuspendState(bHibernate: i32, bForce: i32, bDisableWakeEvent: i32) -> i32;
     }
 
