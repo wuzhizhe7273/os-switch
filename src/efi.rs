@@ -53,7 +53,7 @@ impl BootManager for LinuxEfiBootManager {
         let [lo, hi] = num.to_le_bytes();
         let buf: [u8; 6] = [0x07, 0x00, 0x00, 0x00, lo, hi];
         let path = format!("{}/BootNext-{}", EFIVARS_DIR, EFI_GUID);
-        fs::write(&path, &buf).map_err(|e| BootError::BootNextWriteFailed(format!("{e}")))?;
+        fs::write(&path, buf).map_err(|e| BootError::BootNextWriteFailed(format!("{e}")))?;
         Ok(())
     }
 
