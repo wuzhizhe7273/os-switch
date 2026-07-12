@@ -4,3 +4,8 @@
 /os-switch
 *.tar.gz
 *.tar.zst
+/pkg
+/src/os-switch
+/os-switch
+*.tar.gz
+*.tar.zst
