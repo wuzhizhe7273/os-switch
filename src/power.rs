@@ -9,8 +9,8 @@ unsafe extern "C" {
     fn reboot(cmd: i32) -> i32;
 }
 
-/// 休眠后关机，成功则永不返回
-pub fn hibernate_reboot() -> Result<(), BootError> {
+/// 休眠后关机。成功永不返回，失败返回错误
+pub fn hibernate() -> Result<(), BootError> {
     unsafe {
         sync();
     }
@@ -25,7 +25,7 @@ pub fn hibernate_reboot() -> Result<(), BootError> {
 }
 
 /// 直接重启（不保存会话）
-pub fn reboot_now() -> ! {
+pub fn reboot_system() -> ! {
     unsafe {
         sync();
         reboot(LINUX_REBOOT_CMD_RESTART);

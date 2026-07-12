@@ -41,9 +41,9 @@ fn trigger_power(mgr: &dyn BootManager, reboot: bool, name: &str) -> anyhow::Res
     println!("即将{mode}切换到: {name}");
 
     if reboot {
-        power::reboot_now();
+        power::reboot_system();
     } else {
-        match power::hibernate_reboot() {
+        match power::hibernate() {
             Ok(()) => unreachable!(),
             Err(e) => {
                 eprintln!("{e}");
