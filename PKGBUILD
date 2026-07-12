@@ -7,6 +7,7 @@ pkgdesc="双系统快速切换工具，支持休眠切换和直接切换"
 arch=('x86_64')
 url="https://github.com/wuzhizhe7273/os-switch"
 license=('MIT')
+options=(!debug)
 makedepends=('cargo' 'git')
 source=("git+${url}#tag=v${pkgver}")
 sha256sums=('SKIP')
