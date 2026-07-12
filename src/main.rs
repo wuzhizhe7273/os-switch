@@ -1,8 +1,8 @@
 use anyhow::Context;
 use clap::Parser;
 use os_switch::boot::BootManager;
-use os_switch::cli::{Cli, Command};
-use os_switch::cmd::{self, Cmd, Output};
+use os_switch::cli::Cli;
+use os_switch::cmd::Output;
 use os_switch::display;
 use os_switch::efi::LinuxEfiBootManager;
 use os_switch::power;
@@ -11,10 +11,8 @@ use os_switch::privilege;
 fn main() {
     let cli = Cli::parse();
 
-    // switch/cancel/set 需要 root 写 efivars
-    match &cli.command {
-        Command::Switch { .. } | Command::Cancel | Command::Set { .. } => privilege::ensure_root(),
-        _ => {}
+    if cli.command.needs_root() {
+        privilege::ensure_root();
     }
 
     if let Err(e) = run(cli) {
@@ -24,9 +22,11 @@ fn main() {
 }
 
 fn run(cli: Cli) -> anyhow::Result<()> {
+    let needs_power = cli.command.needs_power();
+    let (cmd, reboot, target_name) = cli.command.into_cmd();
+
     let mgr = LinuxEfiBootManager {};
-    let needs_power = matches!(cli.command, Command::Switch { .. });
-    let (output, reboot, target_name) = execute_command(&cli, &mgr)?;
+    let output = cmd.run(&mgr).context("命令执行失败")?;
     display::render(&output);
 
     if needs_power {
@@ -34,23 +34,6 @@ fn run(cli: Cli) -> anyhow::Result<()> {
     }
 
     Ok(())
-}
-
-fn execute_command(cli: &Cli, mgr: &dyn BootManager) -> anyhow::Result<(Output, bool, String)> {
-    let (cmd, reboot, target): (Box<dyn Cmd>, bool, String) = match &cli.command {
-        Command::List => (Box::new(cmd::list::List), false, String::new()),
-        Command::Status => (Box::new(cmd::status::Status), false, String::new()),
-        Command::Set { name } => (Box::new(cmd::set::Set(name.clone())), false, String::new()),
-        Command::Switch { name, reboot } => (
-            Box::new(cmd::switch_cmd::Switch(name.clone())),
-            *reboot,
-            name.clone(),
-        ),
-        Command::Cancel => (Box::new(cmd::cancel::Cancel), false, String::new()),
-    };
-
-    let output = cmd.run(mgr).context("命令执行失败")?;
-    Ok((output, reboot, target))
 }
 
 fn trigger_power(mgr: &dyn BootManager, reboot: bool, name: &str) -> anyhow::Result<()> {
