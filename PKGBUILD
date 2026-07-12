@@ -8,15 +8,13 @@ arch=('x86_64')
 url="https://github.com/wuzhizhe7273/os-switch"
 license=('MIT')
 makedepends=('cargo')
-source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('SKIP')
 
 build() {
-    cd "${pkgname}-${pkgver}"
+    cp -r "$startdir"/. "$srcdir"
+    cd "$srcdir"
     cargo build --release --locked
 }
 
 package() {
-    cd "${pkgname}-${pkgver}"
-    install -Dm755 target/release/os-switch "${pkgdir}/usr/bin/os-switch"
+    install -Dm755 target/release/os-switch "$pkgdir/usr/bin/os-switch"
 }
