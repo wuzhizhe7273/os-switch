@@ -11,20 +11,12 @@ makedepends=('cargo')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz")
 sha256sums=('SKIP')
 
-_build_dir() {
-    if [[ -f "$startdir/Cargo.toml" ]]; then
-        echo "$startdir"
-    else
-        echo "$srcdir/${pkgname}-${pkgver}"
-    fi
-}
-
 build() {
-    cd "$(_build_dir)"
+    cd "${pkgname}-${pkgver}"
     cargo build --release --locked
 }
 
 package() {
-    cd "$(_build_dir)"
+    cd "${pkgname}-${pkgver}"
     install -Dm755 target/release/os-switch "$pkgdir/usr/bin/os-switch"
 }
