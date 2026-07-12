@@ -51,10 +51,14 @@ impl Command {
         match self {
             Command::List => (Box::new(cmd::list::List), false, String::new()),
             Command::Status => (Box::new(cmd::status::Status), false, String::new()),
-            Command::Set { name } => (Box::new(cmd::set::Set(name.clone())), false, String::new()),
+            Command::Set { name } => (
+                Box::new(cmd::choose::Choose(name.clone())),
+                false,
+                String::new(),
+            ),
             Command::Switch { name, reboot } => {
                 let target = name.clone();
-                (Box::new(cmd::switch_cmd::Switch(name)), reboot, target)
+                (Box::new(cmd::choose::Choose(name)), reboot, target)
             }
             Command::Cancel => (Box::new(cmd::cancel::Cancel), false, String::new()),
         }

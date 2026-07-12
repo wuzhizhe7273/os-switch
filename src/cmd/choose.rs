@@ -2,9 +2,9 @@ use crate::boot::BootManager;
 use crate::cmd::{Cmd, Output};
 use crate::error::BootError;
 
-pub struct Set(pub String);
+pub struct Choose(pub String);
 
-impl Cmd for Set {
+impl Cmd for Choose {
     fn run(&self, mgr: &dyn BootManager) -> Result<Output, BootError> {
         let target = mgr
             .entries()?
