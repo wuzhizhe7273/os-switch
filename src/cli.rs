@@ -13,6 +13,11 @@ pub enum Command {
     List,
     /// 显示当前系统状态
     Status,
+    /// 设置下次引导目标（不触发休眠/重启）
+    Set {
+        /// 目标引导项名称（description 或配置别名）
+        name: String,
+    },
     /// 切换到目标系统
     Switch {
         /// 目标引导项名称（description 或配置别名）

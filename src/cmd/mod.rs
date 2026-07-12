@@ -22,5 +22,6 @@ pub trait Cmd {
 
 pub mod cancel;
 pub mod list;
+pub mod set;
 pub mod status;
 pub mod switch_cmd;

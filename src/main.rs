@@ -11,9 +11,9 @@ use os_switch::privilege;
 fn main() {
     let cli = Cli::parse();
 
-    // switch/cancel 需要 root 写 efivars
+    // switch/cancel/set 需要 root 写 efivars
     match &cli.command {
-        Command::Switch { .. } | Command::Cancel => privilege::ensure_root(),
+        Command::Switch { .. } | Command::Cancel | Command::Set { .. } => privilege::ensure_root(),
         _ => {}
     }
 
@@ -25,10 +25,11 @@ fn main() {
 
 fn run(cli: Cli) -> anyhow::Result<()> {
     let mgr = LinuxEfiBootManager {};
+    let needs_power = matches!(cli.command, Command::Switch { .. });
     let (output, reboot, target_name) = execute_command(&cli, &mgr)?;
     display::render(&output);
 
-    if let Output::SwitchResult { .. } = &output {
+    if needs_power {
         trigger_power(&mgr, reboot, &target_name)?;
     }
 
@@ -39,6 +40,7 @@ fn execute_command(cli: &Cli, mgr: &dyn BootManager) -> anyhow::Result<(Output, 
     let (cmd, reboot, target): (Box<dyn Cmd>, bool, String) = match &cli.command {
         Command::List => (Box::new(cmd::list::List), false, String::new()),
         Command::Status => (Box::new(cmd::status::Status), false, String::new()),
+        Command::Set { name } => (Box::new(cmd::set::Set(name.clone())), false, String::new()),
         Command::Switch { name, reboot } => (
             Box::new(cmd::switch_cmd::Switch(name.clone())),
             *reboot,
