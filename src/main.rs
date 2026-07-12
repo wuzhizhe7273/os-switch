@@ -43,11 +43,10 @@ fn trigger_power(mgr: &dyn BootManager, reboot: bool, name: &str) -> anyhow::Res
     if reboot {
         power::reboot_system();
     } else {
-        match power::hibernate() {
+        match power::try_hibernate(mgr) {
             Ok(()) => unreachable!(),
             Err(e) => {
                 eprintln!("{e}");
-                mgr.clear_next_boot().context("清除 BootNext 失败")?;
                 display::render(&Output::CancelResult);
                 eprintln!("当前会话不受影响。");
             }

@@ -1,5 +1,6 @@
 use std::process::Command;
 
+use crate::boot::BootManager;
 use crate::error::BootError;
 
 const LINUX_REBOOT_CMD_RESTART: i32 = 0x01234567;
@@ -15,7 +16,6 @@ pub fn hibernate() -> Result<(), BootError> {
         sync();
     }
 
-    // systemctl hibernate 发送请求给 logind 后立即返回，logind 异步执行休眠
     Command::new("systemctl")
         .args(["hibernate"])
         .status()
@@ -31,4 +31,15 @@ pub fn reboot_system() -> ! {
         reboot(LINUX_REBOOT_CMD_RESTART);
     }
     std::process::exit(1);
+}
+
+/// 尝试休眠，失败时清除 BootNext 并返回错误
+pub fn try_hibernate(mgr: &dyn BootManager) -> Result<(), BootError> {
+    match hibernate() {
+        Ok(()) => unreachable!(),
+        Err(e) => {
+            mgr.clear_next_boot()?;
+            Err(e)
+        }
+    }
 }
