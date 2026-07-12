@@ -8,6 +8,7 @@ pub struct BootEntry {
 pub trait BootManager {
     fn name(&self) -> &str;
     fn entries(&self) -> Result<Vec<BootEntry>, BootError>;
+    fn read_next_boot(&self) -> Result<Option<u16>, BootError>;
     fn set_next_boot(&self, entry: &BootEntry) -> Result<(), BootError>;
     fn clear_next_boot(&self) -> Result<(), BootError>;
 }

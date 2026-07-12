@@ -47,6 +47,19 @@ impl BootManager for LinuxEfiBootManager {
         Ok(entries)
     }
 
+    fn read_next_boot(&self) -> Result<Option<u16>, BootError> {
+        let path = format!("{}/BootNext-{}", EFIVARS_DIR, EFI_GUID);
+        let data = match fs::read(&path) {
+            Ok(d) => d,
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+            Err(e) => return Err(BootError::EfivarsInaccessible(format!("{e}"))),
+        };
+        if data.len() < 6 {
+            return Ok(None);
+        }
+        Ok(Some(u16::from_le_bytes([data[4], data[5]])))
+    }
+
     fn set_next_boot(&self, entry: &BootEntry) -> Result<(), BootError> {
         let num = u16::from_str_radix(&entry.id, 16)
             .map_err(|_| BootError::BootEntryNotFound(format!("无效 id: {}", entry.id)))?;

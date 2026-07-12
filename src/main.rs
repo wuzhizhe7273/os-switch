@@ -40,6 +40,20 @@ fn cmd_status() -> anyhow::Result<()> {
     let entries = mgr.entries()?;
     println!("  BootManager: {}", mgr.name());
     println!("  活跃引导项: {} 个", entries.len());
+
+    match mgr.read_next_boot()? {
+        Some(boot_num) => {
+            let id = format!("{:04X}", boot_num);
+            let desc = entries
+                .iter()
+                .find(|e| e.id == id)
+                .map(|e| e.description.as_str())
+                .unwrap_or("<未知>");
+            println!("  BootNext: Boot{} → {desc}", id);
+        }
+        None => println!("  BootNext: 未设置"),
+    }
+
     Ok(())
 }
 
