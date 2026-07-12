@@ -10,11 +10,11 @@ license=('MIT')
 makedepends=('cargo')
 
 build() {
-    cp -r "$startdir"/. "$srcdir"
-    cd "$srcdir"
+    cd "$startdir"
     cargo build --release --locked
 }
 
 package() {
+    cd "$startdir"
     install -Dm755 target/release/os-switch "$pkgdir/usr/bin/os-switch"
 }
