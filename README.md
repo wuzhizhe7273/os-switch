@@ -22,6 +22,7 @@ sudo install -m755 target/release/os-switch /usr/local/bin/
 ```bash
 os-switch list                        # 列出所有可用引导项
 os-switch status                      # 显示当前状态
+os-switch set <name>                  # 设置 BootNext（不触发休眠）
 os-switch switch <name>               # 休眠切换到目标系统
 os-switch switch --reboot <name>      # 直接重启切换
 os-switch cancel                      # 清除 BootNext
