@@ -39,6 +39,14 @@ Linux → set BootNext=0003(Windows) → hibernate → 断电
 
 详细格式说明见 [doc/efivars.md](doc/efivars.md)。
 
+## 参考
+
+- PKGBUILD 模板：[`pi-extension-release-aur`](https://github.com/Firstp1ck/npm-packages/blob/main/pi-extension-release-aur/templates/pkgbuild/rust.PKGBUILD.tmpl)
+- Rust 项目带 PKGBUILD：
+  - [`waylyrics/waylyrics`](https://github.com/waylyrics/waylyrics)
+  - [`Firstp1ck/Pacsea`](https://github.com/Firstp1ck/Pacsea)
+- ArchWiki 打包指南：[Rust package guidelines](https://wiki.archlinux.org/title/Rust_package_guidelines)
+
 ## 构建要求
 
 - Rust 1.70+
