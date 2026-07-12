@@ -1,5 +1,6 @@
 /target
 /pkg
-/src/os-switch-*
+/src/os-switch
+/os-switch
 *.tar.gz
 *.tar.zst
